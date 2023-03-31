@@ -1,0 +1,11 @@
+
+
+*.bin
+*.bin.dat
+dense_index_nonoptim.bin.dat  dense_index_optim.bin  dense_index_vptree.bin
+*.txt
+
+sift/
+sift.tar.gz
+
+
