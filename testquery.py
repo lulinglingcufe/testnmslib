@@ -29,7 +29,7 @@ def fvecs_read(fname):
 all_data_matrix = fvecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift_base.fvecs") 
 
 
-query_matrix = all_data_matrix[0:10]
+query_matrix = all_data_matrix[0:8]
 data_matrix = all_data_matrix[1000:2000]
 
 
@@ -60,10 +60,12 @@ index_time_params = {'M': M, 'indexThreadQty': num_threads, 'efConstruction': ef
 print('Index-time parameters', index_time_params)
 
 # Number of neighbors 
-K=10
+#K=10
+K=5 
+
 # Space name should correspond to the space name 
 # used for brute-force search
-space_name='cosinesimil'# l2
+space_name='l2'# l2  cosinesimil
 # Intitialize the library, specify the space, the type of the vector and add data points 
 index = nmslib.init(method='hnsw', space=space_name, data_type=nmslib.DataType.DENSE_VECTOR) 
 index.addDataPointBatch(data_matrix) 
@@ -91,4 +93,30 @@ nbrs = index.knnQueryBatch(query_matrix, k = K, num_threads = num_threads)
 end = time.time() 
 print('kNN time total=%f (sec), per query=%f (sec), per query adjusted for thread number=%f (sec)' % 
       (end-start, float(end-start)/query_qty, num_threads*float(end-start)/query_qty)) 
-print("nbrs",nbrs)
+
+print("query_qty\n",query_qty)
+
+print("query_matrix\n",query_matrix)
+
+print("query_matrix[0]\n",query_matrix[0])
+
+print("query_matrix.shape\n",query_matrix.shape)
+
+#print("nbrs.shape",nbrs.shape)
+
+print("nbrs",nbrs[0])
+
+for i in range(0, 8):
+  ret_set = set(nbrs[i][0])
+  print("ret_set",ret_set)
+
+
+
+all_groundtruth_matrix = ivecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift_groundtruth.ivecs") 
+
+
+groundtruth_matrix = all_groundtruth_matrix[0:8]
+
+print("groundtruth_matrix\n",groundtruth_matrix)
+
+
