@@ -36,13 +36,15 @@ all_data_matrix_query = fvecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift
 #query_matrix = [all_data_matrix[70],all_data_matrix[70],all_data_matrix[70],all_data_matrix[70],all_data_matrix[70],all_data_matrix[70],all_data_matrix[70],all_data_matrix[70],all_data_matrix[70],all_data_matrix[70]]
 #query_matrix = all_data_matrix[0:100]
 #query_matrix = all_data_matrix_query[0:100]
-query_matrix=[]
-sample_list = random.sample(range(0,999),1) #random查询的数量
-for sample_list_item in sample_list:
-    query_matrix.append(all_data_matrix_query[sample_list_item])
+
+query_matrix = all_data_matrix_query[0:100]
+# query_matrix=[]
+# sample_list = random.sample(range(0,999),1) #random查询的数量
+# for sample_list_item in sample_list:
+#     query_matrix.append(all_data_matrix_query[sample_list_item])
 
 
-data_matrix = all_data_matrix[0:100000]#800100   1000000 
+data_matrix = all_data_matrix[0:600000]#800100   1000000 
 print('Load data\n')
 
 
@@ -83,8 +85,22 @@ print('Indexing time = %f' % (end-start))
 
 # Setting query-time parameters 查询参数?
 # efS = 100
-#query_time_params = {'alphaLeft': 2.0, 'alphaRight': 2.0, 'expLeft': 1, 'expRight': 1,'maxLeavesToVisit': 500}
-query_time_params = {'alphaLeft': 4.74275, 'alphaRight': 2.69508, 'expLeft': 1, 'expRight': 1,'maxLeavesToVisit': 500}
+#query_time_params = {'alphaLeft': 2.0, 'alphaRight': 2.0, 'expLeft': 1, 'expRight': 1,'maxLeavesToVisit': 500} #原本的例子
+
+# query_time_params = {'alphaLeft': 4.74275, 'alphaRight': 2.69508, 'expLeft': 1, 'expRight': 1,'maxLeavesToVisit': 5000} #10万数据
+
+#query_time_params = {'alphaLeft': 3.51986, 'alphaRight': 2.45497, 'expLeft': 1, 'expRight': 1, 'maxLeavesToVisit': 7000} #20万数据
+
+#query_time_params = {'alphaLeft': 4.00837, 'alphaRight': 2.30051, 'expLeft': 1, 'expRight': 1,'maxLeavesToVisit': 8000} #30万数据
+
+#query_time_params = {'alphaLeft': 4.00837, 'alphaRight': 2.30051, 'expLeft': 1, 'expRight': 1, 'maxLeavesToVisit': 10000}#40万数据
+
+query_time_params = {'alphaLeft': 3.75618, 'alphaRight': 2.30051, 'expLeft': 1, 'expRight': 1, 'maxLeavesToVisit': 12000}#60万数据
+
+#query_time_params = {'alphaLeft': 3.75618, 'alphaRight': 2.30051, 'expLeft': 1, 'expRight': 1, 'maxLeavesToVisit': 18000}#80万数据
+
+#query_time_params = {'alphaLeft': 3.75618, 'alphaRight': 2.30051, 'expLeft': 1, 'expRight': 1, 'maxLeavesToVisit': 20000}#100万数据
+
 
 print('Setting query-time parameters', query_time_params)
 index.setQueryTimeParams(query_time_params)
@@ -100,76 +116,3 @@ end = time.time()
 
 
 index.saveIndex('dense_index_vptree.bin')
-
-
-
-
-
-
-
-
-
-# # Computing gold-standard data 正确的knn数据 
-# print('Computing gold-standard data')
-
-# start = time.time()
-# sindx = NearestNeighbors(n_neighbors=K, metric='l2', algorithm='brute').fit(data_matrix)
-# end = time.time()
-
-# print('Brute-force preparation time %f' % (end - start))
-
-# start = time.time() 
-# gs = sindx.kneighbors(query_matrix)
-# end = time.time()
-
-# print('brute-force kNN time total=%f (sec), per query=%f (sec)' % 
-#       (end-start, float(end-start)/query_qty) )
-
-# # Finally computing recall
-# recall=0.0
-# for i in range(0, query_qty):
-#   correct_set = set(gs[1][i])
-#   ret_set = set(nbrs[i][0])
-#   recall = recall + float(len(correct_set.intersection(ret_set))) / len(correct_set)
-# recall = recall / query_qty
-# print('kNN recall %f' % recall)
-
-
-# Save a meta index, but no data!
-#index.saveIndex('dense_index_optim.bin', save_data=False)
-
-
-#存储索引？
-#index.saveIndex('dense_index_nonoptim.bin', save_data=True)
-
-# # Re-intitialize the library, specify the space, the type of the vector.
-# newIndex = nmslib.init(method='hnsw', space=space_name, data_type=nmslib.DataType.DENSE_VECTOR) 
-# # For an optimized L2 index, there's no need to re-load data points, but this would be required for
-# # non-optimized index or any other methods different from HNSW (other methods can save only meta indices)
-# newIndex.addDataPointBatch(data_matrix) 
-
-# # # Re-load the index and re-run queries
-# #newIndex.loadIndex('dense_index_optim.bin')
-# newIndex.loadIndex('dense_index_nonoptim.bin', load_data=True)
-
-# # # Setting query-time parameters and querying
-# print('Setting query-time parameters', query_time_params)
-# newIndex.setQueryTimeParams(query_time_params)
-
-# query_qty = query_matrix.shape[0]
-# start = time.time() 
-# new_nbrs = newIndex.knnQueryBatch(query_matrix, k = K, num_threads = num_threads)
-# end = time.time() 
-# print('kNN time total=%f (sec), per query=%f (sec), per query adjusted for thread number=%f (sec)' % 
-#       (end-start, float(end-start)/query_qty, num_threads*float(end-start)/query_qty)) 
-
-
-# # Finally computing recall for the new result set
-# recall=0.0
-# for i in range(0, query_qty):
-#   correct_set = set(gs[1][i])
-#   ret_set = set(new_nbrs[i][0])
-#   recall = recall + float(len(correct_set.intersection(ret_set))) / len(correct_set)
-# recall = recall / query_qty
-# print('kNN recall %f' % recall)
-
