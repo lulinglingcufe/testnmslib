@@ -1,3 +1,6 @@
+import h5py
+
+
 import logging
 logging.basicConfig(level=logging.NOTSET)
 
@@ -16,23 +19,13 @@ print("NMSLIB version:", nmslib.__version__)
 # all_data_matrix = numpy.random.randn(1000, 128).astype(numpy.float32)
 
 
-def ivecs_read(fname):
-    a = numpy.fromfile(fname, dtype='int32')
-    d = a[0]
-    return a.reshape(-1, d + 1)[:, 1:].copy()
+with h5py.File('/home/ubuntu/lulingling/testnmslib/lastfm-64-dot.hdf5', 'r') as file:
+    all_data_matrix  = file['train']#train test distances neighbors
+    all_data_matrix_query = file['test']
 
 
-def fvecs_read(fname):
-    return ivecs_read(fname).view('float32')
-
-
-all_data_matrix = fvecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift_base.fvecs") 
-all_data_matrix_query = fvecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift_query.fvecs")  
-
-
-#query_matrix = all_data_matrix[0:1000]
-query_matrix = all_data_matrix_query[0:100]
-data_matrix = all_data_matrix[0:1000000]
+    query_matrix = all_data_matrix_query[0:100]
+    data_matrix = all_data_matrix[0:200000]  #200000   5000
 
 
 
@@ -54,7 +47,8 @@ data_matrix = all_data_matrix[0:1000000]
 
 # Set index parameters
 # These are the most important onese
-M = 8
+M = 10
+#M = 8
 efC = 100
 
 num_threads = 1
@@ -68,7 +62,7 @@ print('Index-time parameters', index_time_params)
 K=10
 # Space name should correspond to the space name 
 # used for brute-force search
-space_name='l2'# l2
+space_name='l2'# l2 cosinesimil
 # Intitialize the library, specify the space, the type of the vector and add data points 
 index = nmslib.init(method='hnsw', space=space_name, data_type=nmslib.DataType.DENSE_VECTOR) 
 index.addDataPointBatch(data_matrix) 
@@ -88,7 +82,9 @@ print('Indexing time = %f' % (end-start))
 #efS = 60 #40万数据的时候
 #efS = 70 #60万数据的时候
 #efS = 80 #80万数据的时候
-efS = 90 #100万数据的时候
+#efS = 90 #100万数据的时候
+efS = 50
+
 
 query_time_params = {'efSearch': efS}
 print('Setting query-time parameters', query_time_params)
@@ -130,7 +126,7 @@ print('kNN time total=%f (sec), per query=%f (sec), per query adjusted for threa
 
 
 # Save a meta index, but no data!
-index.saveIndex('dense_index_sift_100_optim.bin', save_data=False)
+index.saveIndex('dense_index_lastfm_20_optim.bin', save_data=False)
 #index.saveIndex('dense_index_nonoptim.bin', save_data=True)
 
 # # Re-intitialize the library, specify the space, the type of the vector.

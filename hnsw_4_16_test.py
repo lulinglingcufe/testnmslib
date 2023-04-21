@@ -32,7 +32,7 @@ all_data_matrix_query = fvecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift
 
 #query_matrix = all_data_matrix[0:1000]
 query_matrix = all_data_matrix_query[0:100]
-data_matrix = all_data_matrix[0:1000000]
+data_matrix = all_data_matrix[0:200000]
 
 
 
@@ -54,7 +54,8 @@ data_matrix = all_data_matrix[0:1000000]
 
 # Set index parameters
 # These are the most important onese
-M = 8
+M = 6
+#M = 8
 efC = 100
 
 num_threads = 1
@@ -88,7 +89,9 @@ print('Indexing time = %f' % (end-start))
 #efS = 60 #40万数据的时候
 #efS = 70 #60万数据的时候
 #efS = 80 #80万数据的时候
-efS = 90 #100万数据的时候
+#efS = 90 #100万数据的时候
+efS = 50
+
 
 query_time_params = {'efSearch': efS}
 print('Setting query-time parameters', query_time_params)
@@ -130,7 +133,7 @@ print('kNN time total=%f (sec), per query=%f (sec), per query adjusted for threa
 
 
 # Save a meta index, but no data!
-index.saveIndex('dense_index_sift_100_optim.bin', save_data=False)
+index.saveIndex('dense_index_sift_20_optim.bin', save_data=False)
 #index.saveIndex('dense_index_nonoptim.bin', save_data=True)
 
 # # Re-intitialize the library, specify the space, the type of the vector.
