@@ -1,3 +1,6 @@
+import h5py
+
+
 import logging
 logging.basicConfig(level=logging.NOTSET)
 
@@ -16,25 +19,36 @@ print("NMSLIB version:", nmslib.__version__)
 # all_data_matrix = numpy.random.randn(1000, 128).astype(numpy.float32)
 
 
-def ivecs_read(fname):
-    a = numpy.fromfile(fname, dtype='int32')
-    d = a[0]
-    return a.reshape(-1, d + 1)[:, 1:].copy()
+with h5py.File('/home/ubuntu/lulingling/testnmslib/glove-200-angular.hdf5', 'r') as file:
+    all_data_matrix  = file['train']#train test distances neighbors
+    all_data_matrix_query = file['test']
 
 
-def fvecs_read(fname):
-    return ivecs_read(fname).view('float32')
+    query_matrix = all_data_matrix_query[0:100]
+    data_matrix = all_data_matrix[0:200000]  #200000   5000
 
 
-all_data_matrix = fvecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift_base.fvecs") 
-all_data_matrix_query = fvecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift_query.fvecs")  
 
 
-#query_matrix = all_data_matrix[0:1000]
-query_matrix = all_data_matrix_query[0:100]
-data_matrix = all_data_matrix[0:200000]
 
+
+
+
+
+
+
+
+# query_matrix = all_data_matrix[0:600]
+# data_matrix = all_data_matrix[600:10000]
+# Create a held-out query data set
+# (data_matrix, query_matrix) = train_test_split(all_data_matrix, test_size = 0.1)
+
+# print("# of queries %d, # of data points %d"  % (query_matrix.shape[0], data_matrix.shape[0]) )
+
+# Set index parameters
+# These are the most important onese
 M = 8
+#M = 8
 efC = 100
 
 num_threads = 1
@@ -48,7 +62,7 @@ print('Index-time parameters', index_time_params)
 K=10
 # Space name should correspond to the space name 
 # used for brute-force search
-space_name='l2'# l2
+space_name='cosinesimil'  # l2 cosinesimil
 # Intitialize the library, specify the space, the type of the vector and add data points 
 index = nmslib.init(method='hnsw', space=space_name, data_type=nmslib.DataType.DENSE_VECTOR) 
 index.addDataPointBatch(data_matrix) 
@@ -63,7 +77,7 @@ print('Index-time parameters', index_time_params)
 print('Indexing time = %f' % (end-start))
 
 # Setting query-time parameters
-efS = 50
+efS = 25
 
 
 query_time_params = {'efSearch': efS}
@@ -106,7 +120,9 @@ print('kNN time total=%f (sec), per query=%f (sec), per query adjusted for threa
 
 
 # Save a meta index, but no data!
-index.saveIndex('dense_index_sift_20_optim.bin', save_data=False)
+#index.saveIndex('dense_index_lastfm_20_optim.bin', save_data=False)
+#这里完全可以不存储index！！！！！！！！！！！！！！！！！！！！！
+
 #index.saveIndex('dense_index_nonoptim.bin', save_data=True)
 
 # # Re-intitialize the library, specify the space, the type of the vector.

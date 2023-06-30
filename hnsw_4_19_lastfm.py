@@ -28,16 +28,6 @@ with h5py.File('/home/ubuntu/lulingling/testnmslib/lastfm-64-dot.hdf5', 'r') as 
     data_matrix = all_data_matrix[0:200000]  #200000   5000
 
 
-
-
-
-
-
-
-
-
-
-
 # query_matrix = all_data_matrix[0:600]
 # data_matrix = all_data_matrix[600:10000]
 # Create a held-out query data set
@@ -49,7 +39,7 @@ with h5py.File('/home/ubuntu/lulingling/testnmslib/lastfm-64-dot.hdf5', 'r') as 
 # These are the most important onese
 M = 10
 #M = 8
-efC = 100
+efC =100
 
 num_threads = 1
 #index_time_params = {'M': M, 'indexThreadQty': num_threads, 'efConstruction': efC, 'post' : 0}
@@ -62,7 +52,7 @@ print('Index-time parameters', index_time_params)
 K=10
 # Space name should correspond to the space name 
 # used for brute-force search
-space_name='l2'# l2 cosinesimil
+space_name='cosinesimil'# l2 cosinesimil l2
 # Intitialize the library, specify the space, the type of the vector and add data points 
 index = nmslib.init(method='hnsw', space=space_name, data_type=nmslib.DataType.DENSE_VECTOR) 
 index.addDataPointBatch(data_matrix) 
@@ -77,12 +67,6 @@ print('Index-time parameters', index_time_params)
 print('Indexing time = %f' % (end-start))
 
 # Setting query-time parameters
-#efS = 40 #10万数据的时候
-#efS = 50 #20万数据的时候
-#efS = 60 #40万数据的时候
-#efS = 70 #60万数据的时候
-#efS = 80 #80万数据的时候
-#efS = 90 #100万数据的时候
 efS = 50
 
 

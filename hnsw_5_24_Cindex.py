@@ -32,7 +32,7 @@ all_data_matrix_query = fvecs_read("/home/ubuntu/lulingling/testnmslib/sift/sift
 
 #query_matrix = all_data_matrix[0:1000]
 query_matrix = all_data_matrix_query[0:100]
-data_matrix = all_data_matrix[0:550000]  #[0:550000]
+data_matrix = all_data_matrix[0:500000]  #[0:550000]
 
 
 
